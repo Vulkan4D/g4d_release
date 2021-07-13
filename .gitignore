@@ -1,0 +1,4 @@
+app.ini
+game.ini
+*.log
+**/cache/*
