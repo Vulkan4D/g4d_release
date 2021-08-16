@@ -1,3 +1,5 @@
 terrain_wireframe.vert
+terrain_wireframe.tesc
+terrain_wireframe.tese
 terrain_wireframe.geom
 terrain_wireframe.frag

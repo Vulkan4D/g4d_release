@@ -1,2 +1,4 @@
 terrain_visibility.vert
+terrain_visibility.tesc
+terrain_visibility.tese
 terrain_visibility.frag
