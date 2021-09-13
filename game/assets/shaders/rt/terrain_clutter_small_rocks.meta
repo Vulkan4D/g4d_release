@@ -2,8 +2,5 @@
 1 terrain_clutter_small_rocks.shadow.rint
 2 terrain_clutter_small_rocks.gi.rint
 0 terrain_clutter_small_rocks.rchit
-1 terrain_clutter_small_rocks.shadow.rahit
-2 terrain_clutter_small_rocks.gi.rchit
-0 terrain_clutter_small_rocks.rahit
 1 terrain_clutter_small_rocks.shadow.rchit
-2 terrain_clutter_small_rocks.gi.rahit
+2 terrain_clutter_small_rocks.gi.rchit
