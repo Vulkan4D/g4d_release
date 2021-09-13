@@ -1,2 +1,9 @@
 0 light.rint
 0 light.rahit
+0 light.rchit
+1 light.shadow.rint
+1 light.shadow.rahit
+1 light.shadow.rchit
+1 light.gi.rint
+2 light.gi.rahit
+2 light.gi.rchit
