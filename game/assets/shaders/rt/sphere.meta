@@ -1,2 +1,6 @@
 0 sphere.rint
 0 sphere.rchit
+2 sphere.gi.rint
+2 sphere.gi.rchit
+1 sphere.shadow.rint
+1 sphere.shadow.rahit
