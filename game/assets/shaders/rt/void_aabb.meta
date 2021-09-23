@@ -1,2 +1,6 @@
 0 void_aabb.rint
 0 void_aabb.rchit
+1 void_aabb.shadow.rint
+1 void_aabb.shadow.rahit
+2 void_aabb.gi.rint
+2 void_aabb.gi.rchit
