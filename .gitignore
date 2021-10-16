@@ -1,4 +1,8 @@
-app.ini
-game.ini
+*.ini
 *.log
 **/cache/*
+client/**
+server/**
+clients/**
+servers/**
+
