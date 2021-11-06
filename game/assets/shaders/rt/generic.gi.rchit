@@ -238,24 +238,18 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) TerrainClutterAabbData {
 STATIC_ASSERT_ALIGNED16_SIZE(TerrainClutterAabbData, 32)
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) GeometryInstanceData {
-	f32vec4 _unused;/*
-		// Possible implementation:
-			uint16_t damageAlbedoTexture;
-			uint16_t damageNormalTexture;
-			uint16_t damagePbrTexture;
-			uint16_t corrosionAlbedoTexture;
-			uint16_t corrosionNormalTexture;
-			uint16_t corrosionPbrTexture;
-			uint16_t decalColorTexture;
-			uint8_t damageAmount;
-			uint8_t corrosionAmount;
-		// Or:
-			VkDeviceAddress spotBuffer; { vec3 position; float innerRadius; float outerRadius; uint32_t callableIndex; uint64_t data; }
-			uint8_t nbSpots;
-			uint8_t _unused1;
-			uint16_t _unused2;
-			uint32_t _unused3;
-	*/
+	uint16_t emissiveTexture;
+	
+	// Not implemented yet
+	uint16_t _damageAlbedoTexture;
+	uint16_t _damageNormalTexture;
+	uint16_t _damagePbrTexture;
+	uint16_t _corrosionAlbedoTexture;
+	uint16_t _corrosionNormalTexture;
+	uint16_t _corrosionPbrTexture;
+	uint8_t _damageAmount;
+	uint8_t _corrosionAmount;
+	
 	VkDeviceAddress extraBufferPtr;
 	VkDeviceAddress geometryBufferPtr; // points to one of (SharedGeometryData, TerrainGeometryData, )
 	f32vec4 albedo_opacity;
@@ -1859,6 +1853,12 @@ vec3 TriplanarLocalNormalMap(uint normalTexIndex, vec3 coords, vec3 localFaceNor
 				+ GetVertexColor(i2) * barycentricCoords.z
 			);
 			
+			vec2 uv = (
+				+ GetVertexTexCoord0(i0) * barycentricCoords.x
+				+ GetVertexTexCoord0(i1) * barycentricCoords.y
+				+ GetVertexTexCoord0(i2) * barycentricCoords.z
+			);
+			
 			#ifdef SHADER_SUBPASS_0
 				vec4 tangent = (
 					+ GetVertexTangent(i0) * barycentricCoords.x
@@ -1867,11 +1867,6 @@ vec3 TriplanarLocalNormalMap(uint normalTexIndex, vec3 coords, vec3 localFaceNor
 				);
 				tangent.xyz = normalize(tangent.xyz);
 				tangent.w = sign(tangent.w);
-				vec2 uv = (
-					+ GetVertexTexCoord0(i0) * barycentricCoords.x
-					+ GetVertexTexCoord0(i1) * barycentricCoords.y
-					+ GetVertexTexCoord0(i2) * barycentricCoords.z
-				);
 				ray.normal = normalize(mat3(MODELVIEW) * normalize(GetMaterialNormal(normal, tangent, uv)));
 				ray.color = GetMaterialAlbedo(uv) * geometry.albedo_opacity * vec4(color.rgb, 1);
 				ray.pbr = GetMaterialMetallicRoughness(uv);
@@ -1889,6 +1884,9 @@ vec3 TriplanarLocalNormalMap(uint normalTexIndex, vec3 coords, vec3 localFaceNor
 			}
 			
 			ray.emission = GetEmissionColor(geometry.emission_temperature);
+			if (geometry.emissiveTexture > 0) {
+				ray.emission += texture(textures[int(geometry.emissiveTexture)], uv).rgb;
+			}
 			ray.bump = vec3(0);
 			ray.iOR = GetMaterialIndexOfRefraction();
 			
