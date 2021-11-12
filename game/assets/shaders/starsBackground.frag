@@ -243,24 +243,18 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) TerrainClutterAabbData {
 STATIC_ASSERT_ALIGNED16_SIZE(TerrainClutterAabbData, 32)
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) GeometryInstanceData {
-	f32vec4 _unused;/*
-		// Possible implementation:
-			uint16_t damageAlbedoTexture;
-			uint16_t damageNormalTexture;
-			uint16_t damagePbrTexture;
-			uint16_t corrosionAlbedoTexture;
-			uint16_t corrosionNormalTexture;
-			uint16_t corrosionPbrTexture;
-			uint16_t decalColorTexture;
-			uint8_t damageAmount;
-			uint8_t corrosionAmount;
-		// Or:
-			VkDeviceAddress spotBuffer; { vec3 position; float innerRadius; float outerRadius; uint32_t callableIndex; uint64_t data; }
-			uint8_t nbSpots;
-			uint8_t _unused1;
-			uint16_t _unused2;
-			uint32_t _unused3;
-	*/
+	uint16_t emissiveTexture;
+	
+	// Not implemented yet
+	uint16_t _damageAlbedoTexture;
+	uint16_t _damageNormalTexture;
+	uint16_t _damagePbrTexture;
+	uint16_t _corrosionAlbedoTexture;
+	uint16_t _corrosionNormalTexture;
+	uint16_t _corrosionPbrTexture;
+	uint8_t _damageAmount;
+	uint8_t _corrosionAmount;
+	
 	VkDeviceAddress extraBufferPtr;
 	VkDeviceAddress geometryBufferPtr; // points to one of (SharedGeometryData, TerrainGeometryData, )
 	f32vec4 albedo_opacity;
