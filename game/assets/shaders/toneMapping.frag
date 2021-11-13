@@ -1137,9 +1137,9 @@ vec3 GetMotionVector(in vec2 uv, in float depth) {
 		if (_aimID != 0) {\
 			const bool isMiddleOfScreen = ivec2(gl_LaunchIDEXT.xy) == (ivec2(gl_LaunchSizeEXT.xy) / 2);\
 			if (isMiddleOfScreen) {\
-				if (camera.aimBuffer.aimID == 0) {\
-					camera.aimBuffer.aimID = _aimID;\
-					camera.aimBuffer.uv = _uv;\
+				if (cameras[0].aimBuffer.aimID == 0) {\
+					cameras[0].aimBuffer.aimID = _aimID;\
+					cameras[0].aimBuffer.uv = _uv;\
 				}\
 			}\
 		}\
@@ -1149,9 +1149,9 @@ vec3 GetMotionVector(in vec2 uv, in float depth) {
 		if (_aimID != 0) {\
 			const bool isMiddleOfScreen = ivec2(gl_FragCoord.xy) == (ivec2(camera.width, camera.height) / 2);\
 			if (isMiddleOfScreen) {\
-				if (camera.aimBuffer.aimID == 0) {\
-					camera.aimBuffer.aimID = _aimID;\
-					camera.aimBuffer.uv = _uv;\
+				if (cameras[0].aimBuffer.aimID == 0) {\
+					cameras[0].aimBuffer.aimID = _aimID;\
+					cameras[0].aimBuffer.uv = _uv;\
 				}\
 			}\
 		}\
