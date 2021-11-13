@@ -238,15 +238,14 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) TerrainClutterAabbData {
 STATIC_ASSERT_ALIGNED16_SIZE(TerrainClutterAabbData, 32)
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) GeometryInstanceData {
+	uint32_t aimID; // 0 means no aim for this geometry
 	uint16_t emissiveTexture;
 	
 	// Not implemented yet
 	uint16_t _damageAlbedoTexture;
 	uint16_t _damageNormalTexture;
-	uint16_t _damagePbrTexture;
 	uint16_t _corrosionAlbedoTexture;
 	uint16_t _corrosionNormalTexture;
-	uint16_t _corrosionPbrTexture;
 	uint8_t _damageAmount;
 	uint8_t _corrosionAmount;
 	
@@ -364,6 +363,11 @@ BUFFER_REFERENCE_STRUCT_WRITEONLY(16) MVPBufferCurrent {f32mat4 mvp;};
 BUFFER_REFERENCE_STRUCT_READONLY(16) MVPBufferHistory {f32mat4 mvp;};
 BUFFER_REFERENCE_STRUCT_WRITEONLY(8) RealtimeBufferCurrent {uint64_t mvpFrameIndex;};
 BUFFER_REFERENCE_STRUCT_READONLY(8) RealtimeBufferHistory {uint64_t mvpFrameIndex;};
+BUFFER_REFERENCE_STRUCT(16) AimBuffer {
+	uint32_t aimID;
+	uint32_t _unused;
+	f32vec2 uv;
+};
 
 struct CameraData {
 	f32mat4 viewMatrix;
@@ -406,8 +410,9 @@ struct CameraData {
 	BUFFER_REFERENCE_ADDR(MVPBufferHistory) mvpBufferHistory;
 	BUFFER_REFERENCE_ADDR(RealtimeBufferCurrent) realtimeBuffer;
 	BUFFER_REFERENCE_ADDR(RealtimeBufferHistory) realtimeBufferHistory;
+	BUFFER_REFERENCE_ADDR(AimBuffer) aimBuffer;
 };
-STATIC_ASSERT_ALIGNED16_SIZE(CameraData, 560) // max 1024 for support for up to 64 cameras
+STATIC_ASSERT_ALIGNED16_SIZE(CameraData, 576) // max 1024 for support for up to 64 cameras
 
 struct FSRPushConstant {
 	u32vec4 Const0;
@@ -1127,6 +1132,32 @@ vec3 GetMotionVector(in vec2 uv, in float depth) {
 	ray.normal = DoubleSidedNormals(ray.normal);\
 	ray.fresnel = Fresnel(ray.position, ray.normal, ray.iOR);\
 }
+
+#if defined(SHADER_RCHIT)
+	#define AIMABLE(_aimID, _uv) {\
+		if (_aimID != 0) {\
+			const bool isMiddleOfScreen = ivec2(gl_LaunchIDEXT.xy) == (ivec2(gl_LaunchSizeEXT.xy) / 2);\
+			if (isMiddleOfScreen) {\
+				if (camera.aimBuffer.aimID == 0) {\
+					camera.aimBuffer.aimID = _aimID;\
+					camera.aimBuffer.uv = _uv;\
+				}\
+			}\
+		}\
+	}
+#elif defined(SHADER_FRAG)
+	#define AIMABLE(_aimID, _uv) {\
+		if (_aimID != 0) {\
+			const bool isMiddleOfScreen = ivec2(gl_FragCoord.xy) == (ivec2(camera.width, camera.height) / 2);\
+			if (isMiddleOfScreen) {\
+				if (camera.aimBuffer.aimID == 0) {\
+					camera.aimBuffer.aimID = _aimID;\
+					camera.aimBuffer.uv = _uv;\
+				}\
+			}\
+		}\
+	}
+#endif
 
 /////////////////////////////// Lighting helpers /////////////////////////////////////////////////////////
 
@@ -1870,6 +1901,7 @@ vec3 TriplanarLocalNormalMap(uint normalTexIndex, vec3 coords, vec3 localFaceNor
 				ray.normal = normalize(mat3(MODELVIEW) * normalize(GetMaterialNormal(normal, tangent, uv)));
 				ray.color = GetMaterialAlbedo(uv) * geometry.albedo_opacity * vec4(color.rgb, 1);
 				ray.pbr = GetMaterialMetallicRoughness(uv);
+				AIMABLE(geometry.aimID, uv)
 			#else // SHADER_SUBPASS_2
 				ray.normal = normalize(mat3(MODELVIEW) * normal);
 				ray.color = GetMaterialAlbedo() * geometry.albedo_opacity * vec4(color.rgb, 1);
