@@ -1,0 +1,3 @@
+set gitdir=%~dp0gitbin
+set path=%gitdir%\bin;%path%
+pushd %~dp0 && git.exe config core.filemode false && git-lfs.exe install && git.exe fetch && git.exe checkout master && (git-pull.exe --ff-only origin master || (git.exe reset --hard && git-pull.exe -f --rebase --allow-unrelated-histories origin master && git.exe reset --hard && git-clean.exe -df)) && (rmdir /s /q clients client server servers || echo ) && start g4d.exe -client || pause
