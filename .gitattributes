@@ -1,3 +1,4 @@
 **/*.glb filter=lfs diff=lfs merge=lfs -text
 v4d.dll filter=lfs diff=lfs merge=lfs -text
 game.dll filter=lfs diff=lfs merge=lfs -text
+modules/G4D_avatar/assets/resources/avatar.glb filter=lfs diff=lfs merge=lfs -text
