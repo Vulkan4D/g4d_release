@@ -1919,7 +1919,7 @@ vec3 TriplanarLocalNormalMap(uint normalTexIndex, vec3 coords, vec3 localFaceNor
 			
 			ray.emission = GetEmissionColor(geometry.emission_temperature);
 			if (geometry.emissiveTexture > 0) {
-				ray.emission += texture(textures[int(geometry.emissiveTexture)], uv).rgb;
+				ray.emission += pow(texture(textures[int(geometry.emissiveTexture)], uv).rgb, vec3(camera.gamma));
 			}
 			ray.bump = vec3(0);
 			ray.iOR = GetMaterialIndexOfRefraction();

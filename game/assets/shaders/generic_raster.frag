@@ -1888,7 +1888,7 @@ void main() {
 	out_pbr = GetMaterialMetallicRoughness(in_uv);
 	out_emission = vec4(GetEmissionColor(), 0/*available*/);
 	if (geometry.emissiveTexture > 0) {
-		out_emission += texture(textures[int(geometry.emissiveTexture)], in_uv);
+		out_emission.rgb += pow(texture(textures[int(geometry.emissiveTexture)], in_uv).rgb, vec3(camera.gamma));
 	}
 	out_depth = depth;
 	AIMABLE(geometry.aimID, in_uv)
