@@ -370,7 +370,7 @@ BUFFER_REFERENCE_STRUCT_WRITEONLY(8) RealtimeBufferCurrent {uint64_t mvpFrameInd
 BUFFER_REFERENCE_STRUCT_READONLY(8) RealtimeBufferHistory {uint64_t mvpFrameIndex;};
 BUFFER_REFERENCE_STRUCT(16) AimBuffer {
 	uint32_t aimID;
-	uint32_t _unused;
+	float distance;
 	f32vec2 uv;
 };
 
@@ -1145,6 +1145,7 @@ vec3 GetMotionVector(in vec2 uv, in float depth) {
 			if (isMiddleOfScreen) {\
 				if (cameras[0].aimBuffer.aimID == 0) {\
 					cameras[0].aimBuffer.aimID = _aimID;\
+					cameras[0].aimBuffer.distance = ray.totalDistanceFromEye;\
 					cameras[0].aimBuffer.uv = _uv;\
 				}\
 			}\
@@ -1157,6 +1158,7 @@ vec3 GetMotionVector(in vec2 uv, in float depth) {
 			if (isMiddleOfScreen) {\
 				if (cameras[0].aimBuffer.aimID == 0) {\
 					cameras[0].aimBuffer.aimID = _aimID;\
+					cameras[0].aimBuffer.distance = GetTrueDistanceFromDepthBuffer(gl_FragCoord.z / gl_FragCoord.w);\
 					cameras[0].aimBuffer.uv = _uv;\
 				}\
 			}\
